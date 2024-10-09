@@ -1,0 +1,35 @@
+{
+	"name": "cuda-with-modern-cpp",
+	"build" : {
+        "dockerfile": "Dockerfile",
+		"args": {
+			"USERNAME": "${env:USER}"
+		}
+    },
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"clangd.arguments": [
+					"--header-insertion=never",
+					"--clang-tidy"
+				],
+				"C_Cpp.intelliSenseEngine": "disabled",
+				"[cpp]": {
+					"editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+				}
+			},
+			"extensions": [
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools",
+				"llvm-vs-code-extensions.vscode-clangd",
+				"mhutchie.git-graph"
+			]
+		}
+	},
+	"runArgs": [
+		"--gpus=all",
+		"--cap-add=SYS_PTRACE"
+	],
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/${env:USER}/${localWorkspaceFolderBasename},type=bind",
+	"workspaceFolder": "/home/${env:USER}/${localWorkspaceFolderBasename}"
+}
