@@ -29,7 +29,7 @@ using cuda_vector = std::vector<T, cuda_alloctor<T>>;
 // NOTICE: argument 'op' cannot be a reference, because it will reference to cpu memory and cause runtime error.
 template <typename F>
 void __global__ cuda_parallel_for_kernel(int n, F op) {
-    int idx = blockIdx.x * gridDim.x + threadIdx.x;
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
     int step = gridDim.x * blockDim.x;
     for (int i = idx; i < n; i += step) {
         op(i);
@@ -37,7 +37,7 @@ void __global__ cuda_parallel_for_kernel(int n, F op) {
 }
 
 template <typename F>
-void cuda_parallel_for(int n, F &&op, int gridDim = 1, int blockDim = 128) {
+void cuda_parallel_for(int n, F &&op, int gridDim = 4, int blockDim = 128) {
     CheckCudaKernel(cuda_parallel_for_kernel<<<gridDim, blockDim>>>(n, op));
     CheckCudaApi(cudaDeviceSynchronize());
 }
