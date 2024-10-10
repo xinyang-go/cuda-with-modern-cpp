@@ -1,8 +1,8 @@
-#include <cuda.h>
-
 #include <iostream>
 #include <numeric>
 #include <vector>
+
+#include "../2.cuda-allocator/cuda_allocator.hpp"
 
 #define CheckCudaApi(...)                                                                                \
     do {                                                                                                 \
@@ -22,20 +22,6 @@
             std::terminate();                                                                            \
         }                                                                                                \
     } while (0)
-
-template <typename T>
-struct cuda_alloctor {
-    using value_type = T;
-    using pointer = T *;
-
-    pointer allocate(size_t n) {
-        pointer ptr = nullptr;
-        cudaMallocManaged(&ptr, n * sizeof(value_type));
-        return ptr;
-    }
-
-    void deallocate(pointer ptr, [[maybe_unused]] size_t n) { cudaFree(ptr); }
-};
 
 template <typename T>
 using cuda_vector = std::vector<T, cuda_alloctor<T>>;
